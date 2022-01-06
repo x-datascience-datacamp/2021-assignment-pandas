@@ -11,7 +11,7 @@
 ## How?
 
   - Fork the repository by clicking on the `Fork` button on the upper right corner
-  - Clone the repository of your fork with: `git clone https://github.com/MYLOGIN/datacamp-assignment-pandas` (replace MYLOGIN with your GitHub login)
+  - Clone the repository of your fork with: `git clone https://github.com/MYLOGIN/2021-assignment-pandas` (replace MYLOGIN with your GitHub login)
   - Create a branch called `MYLOGIN` using `git checkout -b MYLOGIN`
   - Make the changes to complete the assignment. You have to modify the files that contain `questions` in their name. Do not modify the files that start with `test_`.
   - Check locally that your solution meet the test by running `pytest` from the root of the repo. You may need to install `pytest` using `pip` or `conda`.
