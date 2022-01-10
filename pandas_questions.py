@@ -20,6 +20,7 @@ def load_data():
     departments = pd.read_csv('data/departments.csv')
     return referendum, regions, departments
 
+
 def merge_regions_and_departments(regions, departments):
     """Merge regions and departments in one DataFrame.
 
@@ -116,4 +117,5 @@ if __name__ == "__main__":
 
     plot_referendum_map(referendum_results)
     plt.show()
+    
     
