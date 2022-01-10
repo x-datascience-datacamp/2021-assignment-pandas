@@ -11,7 +11,7 @@ aggregate them by regions and finally plot them on a map using `geopandas`.
 import pandas as pd
 import geopandas as gpd
 import matplotlib.pyplot as plt
-import descartes
+
 
 def load_data():
     """Load data from the CSV files referundum/regions/departments."""
@@ -20,7 +20,8 @@ def load_data():
     departments = pd.read_csv('data/departments.csv')
     return referendum, regions, departments
 
-#referendum, regions, departments = load_data()
+# referendum, regions, departments = load_data()
+
 
 def merge_regions_and_departments(regions, departments):
     """Merge regions and departments in one DataFrame.
@@ -36,7 +37,8 @@ def merge_regions_and_departments(regions, departments):
 
     return data
 
-#regions_and_departments = merge_regions_and_departments(regions, departments)
+# regions_and_departments = merge_regions_and_departments(regions, departments)
+
 
 def merge_referendum_and_areas(referendum, regions_and_departments):
     """Merge referendum and regions_and_departments in one DataFrame.
@@ -68,8 +70,6 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     return pd.DataFrame(res)
 
 
-# referendum_and_areas = merge_referendum_and_areas(referendum,regions_and_departments)
-
 def compute_referendum_result_by_regions(referendum_and_areas):
     """Return a table with the absolute count for each region.
 
@@ -85,8 +85,6 @@ def compute_referendum_result_by_regions(referendum_and_areas):
         ].sum().set_index('code_reg')
     return res
 
-#referendum_result_by_regions = compute_referendum_result_by_regions(referendum_and_areas)
-
 
 def plot_referendum_map(referendum_result_by_regions):
     """Plot a map with the results from the referendum.
@@ -100,8 +98,8 @@ def plot_referendum_map(referendum_result_by_regions):
     regions = gpd.read_file('data/regions.geojson')
     regions = regions.set_index('code')
     regions_and_referendum = pd.merge(referendum_result_by_regions, regions,
-                                        left_index=True, right_index=True)
-    
+                                      left_index=True, right_index=True)
+
     regions_and_referendum['ratio'] = regions_and_referendum['Choice A'] / (
         regions_and_referendum['Choice A'] + regions_and_referendum['Choice B']
         )
@@ -111,7 +109,8 @@ def plot_referendum_map(referendum_result_by_regions):
 
     return res
 
-#res = plot_referendum_map(referendum_result_by_regions)
+# res = plot_referendum_map(referendum_result_by_regions)
+
 
 if __name__ == "__main__":
 
