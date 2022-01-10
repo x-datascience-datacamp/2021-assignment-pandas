@@ -46,11 +46,12 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     """
     deps = np.arange(0, 96).astype(str)
     deps = np.append(deps, ['2A', '2B'])
-    regions_and_departments['code_dep'] = regions_and_departments['code_dep'].apply(
-        lambda x: x.lstrip('0'))
+    k = regions_and_departments['code_dep'].apply(lambda x: x.lstrip('0'))
+    regions_and_departments['code_dep'] = k
 
     selected_refs = referendum[referendum['Department code'].isin(deps)]
-    r = pd.merge(selected_refs, regions_and_departments, left_on='Department code', right_on='code_dep', how='left')
+    r = pd.merge(selected_refs, regions_and_departments,
+                 left_on='Department code', right_on='code_dep', how='left')
     return r
 
 
@@ -104,4 +105,3 @@ if __name__ == "__main__":
 
     plot_referendum_map(referendum_results)
     plt.show()
-
