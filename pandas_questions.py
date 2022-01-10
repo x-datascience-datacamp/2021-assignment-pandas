@@ -16,8 +16,7 @@ import json
 
 
 def load_data():
-    """Load data from the CSV files referundum/regions/departments.
-    """
+    """Load data from the CSV files referundum/regions/departments."""
     file_referendum = os.path.join(".", "data",
                                    "referendum.csv")
     file_regions = os.path.join(".", "data",
