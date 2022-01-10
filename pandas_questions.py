@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 
 
 def code_dep_proc(x):
-    """Process the department code"""
+    """Process the department code."""
     if x[0] == '0':
         return x[1]
     elif len(x) == 3:
