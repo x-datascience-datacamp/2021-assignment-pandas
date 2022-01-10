@@ -24,11 +24,9 @@ def load_data():
 
 def merge_regions_and_departments(regions, departments):
     """Merge regions and departments in one DataFrame.
-
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
-
     regions = regions.rename(columns={'code': 'code_reg', 'name': 'name_reg'})
     columns = {'code': 'code_dep',
                'name': 'name_dep',
