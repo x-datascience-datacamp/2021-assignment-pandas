@@ -116,8 +116,7 @@ def plot_referendum_map(referendum_result_by_regions):
                              region_df.drop(columns=['nom']),
                              left_on='code_reg', right_on='code')
     region_ref_df = region_ref_df.set_index('code')
-    region_ref_df['ratio'] = region_ref_df['Choice A'] /
-    (region_ref_df['Choice A'] + region_ref_df['Choice B'])
+    region_ref_df['ratio'] = region_ref_df['Choice A'] / (region_ref_df['Choice A'] + region_ref_df['Choice B'])
     region_ref_df = gpd.GeoDataFrame(df, geometry='geometry')
     return referendum_gpd
 
