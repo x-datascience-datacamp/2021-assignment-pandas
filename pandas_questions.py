@@ -47,11 +47,11 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     french living abroad.
     """
     referendum['Department code'] = referendum['Department code']\
-                                        .apply(lambda x : x.zfill(2))
+                                    .apply(lambda x: x.zfill(2))
     df_merged = pd.merge(regions_and_departments,
-                        referendum,
-                        left_on='code_dep',
-                        right_on='Department code')
+                            referendum,
+                            left_on='code_dep',
+                            right_on='Department code')
 
     return df_merged
 
@@ -64,10 +64,10 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     """
     df_groupby = referendum_and_areas.groupby(['code_reg', 'name_reg'])
     return df_groupby.agg({'Registered': "sum",
-                            "Abstentions": "sum",
-                            "Null": "sum",
-                            "Choice A": "sum",
-                            "Choice B": "sum"}).reset_index('name_reg')
+                        "Abstentions": "sum",
+                        "Null": "sum",
+                        "Choice A": "sum",
+                        "Choice B": "sum"}).reset_index('name_reg')
 
 
 def plot_referendum_map(referendum_result_by_regions):
@@ -86,9 +86,8 @@ def plot_referendum_map(referendum_result_by_regions):
     df_merged = pd.merge(referendum_result_by_regions, geo_df, on='code_reg')
 
     df_merged['ratio'] = df_merged['Choice A'] / (df_merged['Registered'] -
-                                                    df_merged['Abstentions'] -
-                                                    df_merged['Null']
-                                                )
+                                                df_merged['Abstentions'] -
+                                                df_merged['Null'])
 
     geo_ratio = gpd.GeoDataFrame(df_merged)
     geo_ratio.plot(column="ratio", legend=True)
