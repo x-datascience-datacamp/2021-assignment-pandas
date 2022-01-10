@@ -40,7 +40,8 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
-    referendum_and_areas = pd.merge(regions_and_departments, referendum,  left_on= 'code_dep', \
+    referendum["Department code"] = referendum["Department code"].apply(lambda x:'0' + x if x==1 else x)
+    referendum_and_areas = pd.merge(regions_and_departments, referendum, left_on = 'code_dep', \
                             right_on = "Department code")
 
     return referendum_and_areas.dropna()
@@ -69,7 +70,7 @@ def plot_referendum_map(referendum_result_by_regions):
     * Return a gpd.GeoDataFrame with a column 'ratio' containing the results.
     """
     geodata = gpd.read_file('data/regions.geojson')
-    data = pd.merge(referendum_result_by_regions, geodata, left_on='name_reg', right_on='nom')
+    data = pd.merge(referendum_result_by_regions, geodata, left_on = 'name_reg', right_on = 'nom')
     data.index = referendum_result_by_regions.index
     data['rate'] = data['Choice A']/(data['Registered'] - data['Abstentions'] - data['Null'])
     output = gpd.GeoDataFrame(data, geometry='geometry')
