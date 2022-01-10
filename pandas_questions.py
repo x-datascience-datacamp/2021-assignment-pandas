@@ -32,7 +32,6 @@ def merge_regions_and_departments(regions, departments):
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
-
     df = departments.merge(regions,
                            how="left",
                            left_on="region_code",
@@ -50,7 +49,6 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
-
     dico = {"1": "01",
             "2": "02",
             "3": "03",
