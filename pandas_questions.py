@@ -60,17 +60,13 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     return rbr
 
 def plot_referendum_map(referendum_result_by_regions):
-    df = gpd.read_file('data/regions.geojson')
-    output = pd.merge(
-        referendum_result_by_regions, df, left_on='name_reg', right_on='nom')
-    output.index = referendum_result_by_regions.index
-    output['ratio'] = output['Choice A'] / (
-        output['Registered'] - output['Abstentions'] - output['Null'])
-    output = gpd.GeoDataFrame(output, geometry='geometry')
-    fig, ax = plt.subplots(1, 1, figsize=(10, 10))
-    output.plot(column='ratio', ax=ax, legend=True)
-    ax.set_title(title)
-    return output
+    geo_df = gpd.read_file('data/regions.geojson')
+    df = pd.merge(referendum_result_by_regions, geo_df.drop(columns=['nom']),
+                  left_on='code_reg', right_on='code')
+    df = df.set_index('code')
+    df['ratio'] = df['Choice A']/(df['Choice A']+df['Choice B'])
+    df = gpd.GeoDataFrame(df, geometry='geometry')
+    return df
 
 
 if __name__ == "__main__":
