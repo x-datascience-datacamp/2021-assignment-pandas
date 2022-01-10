@@ -11,13 +11,14 @@ aggregate them by regions and finally plot them on a map using `geopandas`.
 import pandas as pd
 import geopandas as gpd
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 def load_data():
     """Load data from the CSV files referundum/regions/departments."""
-    referendum = pd.DataFrame({})
-    regions = pd.DataFrame({})
-    departments = pd.DataFrame({})
+    referendum = pd.read_csv('data/referendum.csv', sep=';')
+    regions = pd.read_csv('data/regions.csv')
+    departments = pd.read_csv('data/departments.csv')
 
     return referendum, regions, departments
 
@@ -28,8 +29,13 @@ def merge_regions_and_departments(regions, departments):
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
-
-    return pd.DataFrame({})
+    regions.set_index('code')
+    departments.set_index('region_code')
+    columns = ['code_reg', 'name_reg', 'code_dep', 'name_dep']
+    return regions.merge(departments,
+                         left_on='code',
+                         right_on='region_code',
+                         suffixes=('_reg', '_dep'))[columns]
 
 
 def merge_referendum_and_areas(referendum, regions_and_departments):
@@ -38,8 +44,28 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
+    referendum.set_index('Department code')
+    regions_and_departments.set_index('code_dep')
 
-    return pd.DataFrame({})
+    problem_dep = np.array([ord(c[0]) == ord('0')
+                            for c in regions_and_departments['code_dep']])
+    problem_reg = np.array([ord(c[0]) == ord('0')
+                            for c in regions_and_departments['code_reg']])
+    for i in regions_and_departments.index:
+        if problem_dep[i]:
+            regions_and_departments['code_dep'][i] = str(
+                            int(regions_and_departments['code_dep'][i]))
+        if problem_reg[i]:
+            regions_and_departments['code_reg'][i] = str(
+                            int(regions_and_departments['code_reg'][i]))
+
+    referendum2 = referendum[
+        np.array([ord(c[0]) for c in referendum['Department code']]) != 90]
+    res = referendum2.merge(regions_and_departments,
+                            how='left',
+                            left_on='Department code',
+                            right_on='code_dep')
+    return res
 
 
 def compute_referendum_result_by_regions(referendum_and_areas):
@@ -48,8 +74,15 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     The return DataFrame should be indexed by `code_reg` and have columns:
     ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
     """
-
-    return pd.DataFrame({})
+    referendum_and_areas.set_index('name_reg')
+    referendum_and_areas = referendum_and_areas[['name_reg',
+                                                 'Registered',
+                                                 'Abstentions',
+                                                 'Null',
+                                                 'Choice A',
+                                                 'Choice B']]
+    res = referendum_and_areas.groupby(by='name_reg', as_index=False).sum()
+    return res
 
 
 def plot_referendum_map(referendum_result_by_regions):
@@ -61,8 +94,15 @@ def plot_referendum_map(referendum_result_by_regions):
       should display the rate of 'Choice A' over all expressed ballots.
     * Return a gpd.GeoDataFrame with a column 'ratio' containing the results.
     """
-
-    return gpd.GeoDataFrame({})
+    gdf = gpd.read_file('data/regions.geojson')
+    res = referendum_result_by_regions.merge(gdf,
+                                             how='left',
+                                             left_on='name_reg',
+                                             right_on='nom')
+    res['ratio'] = res['Choice A']/(res['Choice A'] + res['Choice B'])
+    map = gpd.GeoDataFrame(res)
+    map.plot(column='ratio', legend=True)
+    return map
 
 
 if __name__ == "__main__":
