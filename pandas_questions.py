@@ -113,8 +113,8 @@ def plot_referendum_map(referendum_result_by_regions):
     """
     r_df = gpd.read_file('data/regions.geojson')
     df = pd.merge(referendum_result_by_regions,
-                             r_df.drop(columns=['nom']),
-                             left_on='code_reg', right_on='code')
+                  r_df.drop(columns=['nom']),
+                            left_on='code_reg', right_on='code')
     df = df.set_index('code')
     df['ratio'] = df['Choice A'] / (df['Choice A'] + df['Choice B'])
     df = gpd.GeoDataFrame(df, geometry='geometry')
