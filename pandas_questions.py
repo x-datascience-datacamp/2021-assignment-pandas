@@ -48,7 +48,6 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
-
     return referendum[~referendum['Department code'].str.startswith('Z')].\
         merge(regions_and_departments, how='left', left_on='Department code',
               right_on='code_dep')
@@ -80,7 +79,6 @@ def plot_referendum_map(referendum_result_by_regions):
       should display the rate of 'Choice A' over all expressed ballots.
     * Return a gpd.GeoDataFrame with a column 'ratio' containing the results.
     """
-
     coordinates = gpd.read_file('data/regions.geojson')
     merged = referendum_result_by_regions.merge(coordinates[
         ['code', 'geometry']], how='left', left_index=True, right_on='code')
