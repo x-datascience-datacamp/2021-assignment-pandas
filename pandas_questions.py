@@ -47,11 +47,11 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     french living abroad.
     """
     referendum['Department code'] = referendum['Department code']\
-                                .apply(lambda x: x.zfill(2))
+        .apply(lambda x: x.zfill(2))
     df_merged = pd.merge(regions_and_departments,
-                        referendum,
-                        left_on='code_dep',
-                        right_on='Department code')
+                         referendum,
+                         left_on='code_dep',
+                         right_on='Department code')
 
     return df_merged
 
@@ -64,7 +64,7 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     """
     df_groupby = referendum_and_areas.groupby(['code_reg', 'name_reg'])
     return df_groupby.agg({"Registered": "sum",
-                            "Abstentions": "sum",
+                           "Abstentions": "sum",
                             "Null": "sum",
                             "Choice A": "sum",
                             "Choice B": "sum"}).reset_index('name_reg')
