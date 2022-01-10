@@ -65,9 +65,9 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     df_groupby = referendum_and_areas.groupby(['code_reg', 'name_reg'])
     return df_groupby.agg({"Registered": "sum",
                            "Abstentions": "sum",
-                            "Null": "sum",
-                            "Choice A": "sum",
-                            "Choice B": "sum"}).reset_index('name_reg')
+                           "Null": "sum",
+                           "Choice A": "sum",
+                           "Choice B": "sum"}).reset_index('name_reg')
 
 
 def plot_referendum_map(referendum_result_by_regions):
