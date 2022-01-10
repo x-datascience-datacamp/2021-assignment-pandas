@@ -9,16 +9,21 @@ To do that, you will load the data as pandas.DataFrame, merge the info and
 aggregate them by regions and finally plot them on a map using `geopandas`.
 """
 import pandas as pd
+import numpy as np
 import geopandas as gpd
 import matplotlib.pyplot as plt
+import json
+
+import shapely
+
+from shapely.geometry import Polygon, MultiPolygon
 
 
 def load_data():
     """Load data from the CSV files referundum/regions/departments."""
-    referendum = pd.DataFrame({})
-    regions = pd.DataFrame({})
-    departments = pd.DataFrame({})
-
+    referendum = pd.read_csv('./data/referendum.csv', sep=';')
+    regions = pd.read_csv('./data/regions.csv')
+    departments = pd.read_csv('./data/departments.csv')
     return referendum, regions, departments
 
 
@@ -28,8 +33,17 @@ def merge_regions_and_departments(regions, departments):
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
+    df_reg.rename(columns={'code' : 'code_reg',
+              'name' : 'name_reg'}, inplace =1)
 
-    return pd.DataFrame({})
+    df_dep.rename(columns={'region_code' : 'code_reg',
+                   'code' : 'code_dep',
+                  'name' : 'name_dep'}, inplace =1)
+
+    df_res = df_reg.merge(df_dep, on='code_reg')
+    df_res = df_res[['code_reg', 'name_reg', 'code_dep', 'name_dep']]
+
+    return df_res
 
 
 def merge_referendum_and_areas(referendum, regions_and_departments):
@@ -39,8 +53,21 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     french living abroad.
     """
 
-    return pd.DataFrame({})
+    def transform_type(code):
+        list_codes = [str(i) for i in range(10)]
+        if code in list_codes:
+            code = '0' + code
+        return code
+   
+    regions_and_departments = regions_and_departments[~regions_and_departments['code_reg'].isin([f'0{i}' for i in range(1,7)])]
+    regions_and_departments = regions_and_departments[regions_and_departments['code_reg'] != 'COM']
 
+    #regions_and_departments.rename(columns={'code_dep' : 'Department code'}, inplace=1)
+    referendum['Department code'] = referendum['Department code'].apply(transform_type)
+
+    df_res = pd.merge(referendum, regions_and_departments, how='right', left_on='Department code', right_on='code_dep')
+
+    return df_res
 
 def compute_referendum_result_by_regions(referendum_and_areas):
     """Return a table with the absolute count for each region.
@@ -48,8 +75,9 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     The return DataFrame should be indexed by `code_reg` and have columns:
     ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
     """
+    col = ['Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
 
-    return pd.DataFrame({})
+    return referendum_and_areas.groupby('name_reg').agg('sum')[col].reset_index()
 
 
 def plot_referendum_map(referendum_result_by_regions):
@@ -62,7 +90,23 @@ def plot_referendum_map(referendum_result_by_regions):
     * Return a gpd.GeoDataFrame with a column 'ratio' containing the results.
     """
 
-    return gpd.GeoDataFrame({})
+    with open('./data/regions.geojson') as f:
+        regions = json.load(f)
+
+    l = [[r['geometry']['type'], r['geometry']['coordinates'], r['properties']['code'], r['properties']['nom']] for r in regions['features']]
+    df_geo = gpd.GeoDataFrame(l, columns=['type', 'coordinates', 'code', 'name_reg'])
+
+    def to_polygon(row):
+        if row.type == 'Polygon':
+            return Polygon([tuple(r) for r in row.coordinates][0])
+        if row.type == 'MultiPolygon':
+            coordinates = row.coordinates
+            return MultiPolygon([Polygon([tuple(r) for r in coordinates[i][0]]) for i in range(len(coordinates))])
+
+    df_geo['geometry'] = df_geo.apply(to_polygon, axis=1)
+    referendum_result_by_regions['ratio'] = referendum_result_by_regions['Choice A'] / (referendum_result_by_regions['Choice A'] + referendum_results['Choice B'])
+    df = df_geo.merge(referendum_result_by_regions.reset_index())
+    return df
 
 
 if __name__ == "__main__":
