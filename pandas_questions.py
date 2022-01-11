@@ -89,6 +89,7 @@ def plot_referendum_map(referendum_result_by_regions):
     referendum_map.drop(columns=['nom'], inplace=True)
     referendum_map['ratio'] = (referendum_map['Choice A'])/(
         referendum_map['Choice A'] + referendum_map['Choice B'])
+
     referendum_map = gpd.GeoDataFrame(referendum_map, geometry='geometry')
 
     return referendum_map
