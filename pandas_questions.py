@@ -56,8 +56,11 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
         lambda x: "0" + x if len(x) == 1 else x
     )
     # merge
-
-    return pd.merge(referendum_, regions_and_departments, on="code_dep", how="left")
+    merged = pd.merge(referendum_,
+                      regions_and_departments,
+                      on="code_dep",
+                      how="left")
+    return merged
 
 
 def compute_referendum_result_by_regions(referendum_and_areas):
@@ -78,7 +81,7 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     )
 
 
-def plot_referendum_map(referendum_result_by_regions):
+def plot_referendum_map(referendum_results):
     """Plot a map with the results from the referendum.
 
     * Load the geographic data with geopandas from `regions.geojson`.
@@ -87,6 +90,7 @@ def plot_referendum_map(referendum_result_by_regions):
       should display the rate of 'Choice A' over all expressed ballots.
     * Return a gpd.GeoDataFrame with a column 'ratio' containing the results.
     """
+    print(referendum_results)
     referendum_results["expressed"] = (
         referendum_results["Registered"]
         - referendum_results["Abstentions"]
@@ -98,20 +102,23 @@ def plot_referendum_map(referendum_result_by_regions):
 
     gdf = gpd.read_file(os.path.join("data", "regions.geojson"))
     gdfm = gdf.rename(columns={"code": "code_reg"}).merge(
-        referendum_results["ratio"], on="code_reg"
+        referendum_results[["ratio", 'name_reg']], on="code_reg"
     )
     gdfm.plot(column="ratio", legend=True)
     return gdfm
 
 
 if __name__ == "__main__":
-
     referendum, df_reg, df_dep = load_data()
-    regions_and_departments = merge_regions_and_departments(df_reg, df_dep)
+    regions_and_departments = merge_regions_and_departments(
+        df_reg, df_dep
+    )
     referendum_and_areas = merge_referendum_and_areas(
         referendum, regions_and_departments
     )
-    referendum_results = compute_referendum_result_by_regions(referendum_and_areas)
+    referendum_results = compute_referendum_result_by_regions(
+        referendum_and_areas
+    )
     print(referendum_results)
     plot_referendum_map(referendum_results)
     plt.show()
