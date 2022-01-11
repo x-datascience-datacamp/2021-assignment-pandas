@@ -41,7 +41,6 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
-
     referendum = referendum.drop(referendum[referendum["Department code"]
                                  .str.startswith("Z")].index)
     referendum["Department code"] = referendum["Department code"].str.zfill(2)
@@ -63,7 +62,6 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     The return DataFrame should be indexed by `code_reg` and have columns:
     ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
     """
-
     return referendum_and_areas.groupby('name_reg').sum()\
         .reset_index("name_reg").drop("Town code", axis=1)
 
