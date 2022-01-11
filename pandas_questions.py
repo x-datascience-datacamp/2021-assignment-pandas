@@ -9,7 +9,7 @@ To do that, you will load the data as pandas.DataFrame, merge the info and
 aggregate them by regions and finally plot them on a map using `geopandas`.
 """
 import pandas as pd
-import geopandas as gpd
+#import geopandas as gpd
 import matplotlib.pyplot as plt
 
 
@@ -50,9 +50,14 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
         lambda x: x.zfill(2))
     referendum_and_areas = pd.merge(referendum, regions_and_departments,
                                     left_on='Department code',
-                                    right_on="code_dep", how="left")
+                                    right_on="code_dep", how="left").dropna(axis=0)
 
     return referendum_and_areas
+
+
+referendum, regions, departments = load_data()
+reg_dep = merge_regions_and_departments(regions, departments)
+print(merge_referendum_and_areas(referendum, reg_dep))
 
 
 def compute_referendum_result_by_regions(referendum_and_areas):
