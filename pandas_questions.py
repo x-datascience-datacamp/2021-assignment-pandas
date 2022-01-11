@@ -29,9 +29,13 @@ def merge_regions_and_departments(regions, departments):
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
     regions_and_departments = regions.merge(departments, how='inner',
-                                            left_on=['code'], right_on=['region_code'],
-                                            suffixes=['_reg', '_dep'])[['code_reg', 'name_reg',
-                                                                        'code_dep', 'name_dep']]
+                                            left_on=['code'],
+                                            right_on=['region_code'],
+                                            suffixes=['_reg',
+                                                      '_dep'])[['code_reg',
+                                                                'name_reg',
+                                                                'code_dep',
+                                                                'name_dep']]
     return regions_and_departments
 
 
@@ -41,7 +45,8 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
-    referendum.loc[:, 'Department code'] = (referendum['Department code'].str.pad(2, fillchar='0'))
+    referendum.loc[:, 'Department code'] = (referendum['Department code']\
+                                            .str.pad(2, fillchar='0'))
     referendum_and_areas = referendum.merge(regions_and_departments,
                                             how='inner',
                                             left_on=['Department code'],
