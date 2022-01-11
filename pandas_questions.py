@@ -64,6 +64,7 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
 
 def compute_referendum_result_by_regions(referendum_and_areas):
     """Return a table with the absolute count for each region.
+
     The return DataFrame should be indexed by `code_reg` and have columns:
     ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
     """
@@ -76,6 +77,7 @@ def compute_referendum_result_by_regions(referendum_and_areas):
 
 def plot_referendum_map(referendum_result_by_regions):
     """Plot a map with the results from the referendum.
+
     * Load the geographic data with geopandas from `regions.geojson`.
     * Merge these info into `referendum_result_by_regions`.
     * Use the method `GeoDataFrame.plot` to display the result map. The results
