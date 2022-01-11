@@ -74,11 +74,11 @@ def plot_referendum_map(referendum_result_by_regions):
 
     regions = regions.rename(columns={'code': 'code_reg'})
 
-    referendum_result_by_regions['rate A'] = referendum_result_by_regions['Choice A'] / (referendum_result_by_regions['Choice A'] + referendum_result_by_regions['Choice B'])
+    referendum_result_by_regions['ratio'] = referendum_result_by_regions['Choice A'] / (referendum_result_by_regions['Choice A'] + referendum_result_by_regions['Choice B'])
 
-    output = gpd.GeoDataFrame(referendum_result_by_regions.merge(regions, on='code_reg', how='right').dropna()[['rate A', 'code_reg', 'name_reg', 'geometry']])
+    output = gpd.GeoDataFrame(referendum_result_by_regions.merge(regions, on='code_reg', how='right').dropna()[['ratio', 'code_reg', 'name_reg', 'geometry']])
 
-    output.plot('rate A')
+    output.plot('ratio')
 
     return output
 
