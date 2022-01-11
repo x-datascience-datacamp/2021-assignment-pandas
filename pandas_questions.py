@@ -1,10 +1,8 @@
 """Plotting referendum results in pandas.
-
 In short, we want to make beautiful map to report results of a referendum. In
 some way, we would like to depict results with something similar to the maps
 that you can find here:
 https://github.com/x-datascience-datacamp/datacamp-assignment-pandas/blob/main/example_map.png
-
 To do that, you will load the data as pandas.DataFrame, merge the info and
 aggregate them by regions and finally plot them on a map using `geopandas`.
 """
@@ -12,26 +10,31 @@ import pandas as pd
 import geopandas as gpd
 import matplotlib.pyplot as plt
 
-
 def load_data():
     """Load data from the CSV files referundum/regions/departments."""
-    referendum = pd.read_csv('.data/referendum.csv', sep=";")
-    regions = pd.read_csv('.data/regions.csv', sep=";")
-    departments = pd.read_csv('.data/departments.csv', sep=";")
+    referendum = pd.read_csv("./data/referendum.csv", sep=";")
+    regions = pd.read_csv("./data/regions.csv", sep=",")
+    departments = pd.read_csv("./data/departments.csv", sep=",")
 
     return referendum, regions, departments
 
 
 def merge_regions_and_departments(regions, departments):
     """Merge regions and departments in one DataFrame.
-
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
-  merged_df = pd.merge(regions[["code", "name"]].rename(columns={"code": "code_reg","name": "name_reg"}),
-        departments[["region_code", "code", "name"]].rename(columns={"region_code": "code_reg","code": "code_dep","name": "name_dep"}),
+    merged_df = pd.merge(
+        regions[["code", "name"]].rename(columns={
+            "code": "code_reg",
+            "name": "name_reg"}),
+        departments[["region_code", "code", "name"]].rename(columns={
+            "region_code": "code_reg",
+            "code": "code_dep",
+            "name": "name_dep"}),
         on="code_reg",
         how="inner")
+
     return merged_df
 
 
@@ -55,14 +58,6 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     return merged_df
 
 
-def compute_referendum_result_by_regions(referendum_and_areas):
-    """Return a table with the absolute count for each region.
-
-    The return DataFrame should be indexed by `code_reg` and have columns:
-    ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
-    """
-
-    return pd.DataFrame({})
 def compute_referendum_result_by_regions(referendum_and_areas):
     """Return a table with the absolute count for each region.
     The return DataFrame should be indexed by `code_reg` and have columns:
@@ -112,3 +107,4 @@ if __name__ == "__main__":
 
     plot_referendum_map(referendum_results)
     plt.show()
+
