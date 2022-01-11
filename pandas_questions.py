@@ -28,8 +28,8 @@ def merge_regions_and_departments(regions, departments):
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
-    regions_and_departments = pd.merge(regions, departments, left_on = 'code', \
-    right_on = 'region_code').loc[:, ['region_code', 'name_x','code_y', 'name_y']]
+    regions_and_departments = pd.merge(regions, departments,left_on="code", right_on="region_code")
+    regions_and_departments = regions_and_departments[["region_code", "name_x", "code_y", "name_y"]]
     regions_and_departments.columns = ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     return regions_and_departments
 
