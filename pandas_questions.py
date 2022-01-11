@@ -80,7 +80,7 @@ def plot_referendum_map(referendum_result_by_regions):
     results = pd.merge(geodata, referendum_result_by_regions,
                        left_index=True, right_index=True)
     rate = results["Choice A"] / (results["Choice A"] +
-                                   results["Choice B"])
+                                  results["Choice B"])
     results["ratio"] = rate
     results.plot(column="ratio")
 
