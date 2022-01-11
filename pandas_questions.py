@@ -28,7 +28,6 @@ def merge_regions_and_departments(regions, departments):
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
-
     temp = pd.merge(regions, departments, left_on='code',
                     right_on='region_code', how='inner')
     temp = temp[['region_code', 'name_x', 'code_y', 'name_y']]
@@ -44,7 +43,6 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
-
     referendum['Department code'] = referendum['Department code'].apply(
                                     lambda x: x.zfill(2))
     df = pd.merge(regions_and_departments, referendum, left_on='code_dep',
