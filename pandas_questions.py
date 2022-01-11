@@ -28,7 +28,10 @@ def merge_regions_and_departments(regions, departments):
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
-    regions_and_departments = regions.merge(departments, how='inner', left_on=['code'], right_on=['region_code'], suffixes=['_reg', '_dep'])[['code_reg', 'name_reg', 'code_dep', 'name_dep']]
+    regions_and_departments = regions.merge(departments, how='inner',
+                                            left_on=['code'], right_on=['region_code'],
+                                            suffixes=['_reg', '_dep'])[['code_reg', 'name_reg',
+                                                                        'code_dep', 'name_dep']]
     return regions_and_departments
 
 
@@ -39,7 +42,10 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     french living abroad.
     """
     referendum.loc[:, 'Department code'] = (referendum['Department code'].str.pad(2, fillchar='0'))
-    referendum_and_areas = referendum.merge(regions_and_departments, how='inner', left_on=['Department code'], right_on=['code_dep'])
+    referendum_and_areas = referendum.merge(regions_and_departments,
+                                            how='inner',
+                                            left_on=['Department code'],
+                                            right_on=['code_dep'])
     return referendum_and_areas
 
 
