@@ -9,7 +9,7 @@ To do that, you will load the data as pandas.DataFrame, merge the info and
 aggregate them by regions and finally plot them on a map using `geopandas`.
 """
 import pandas as pd
-#import geopandas as gpd
+import geopandas as gpd
 import matplotlib.pyplot as plt
 
 
