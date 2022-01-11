@@ -39,6 +39,7 @@ def merge_regions_and_departments(regions, departments):
         suffixes=("_reg", "_dep"),
     )
 
+
 def merge_referendum_and_areas(referendum, regions_and_departments):
     """Merge referendum and regions_and_departments in one DataFrame.
 
