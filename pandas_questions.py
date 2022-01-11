@@ -30,8 +30,8 @@ def merge_regions_and_departments(regions, departments):
     reg = ["code", "name"]
     dep = ["region_code", "code", "name"]
     data = regions[reg].merge(departments[dep],
-                              right_on="region_code", 
-                              left_on="code", 
+                              right_on="region_code",
+                              left_on="code",
                               suffixes=('_reg', "_dep"))
     data.drop(columns='region_code', inplace=True)
     return data
