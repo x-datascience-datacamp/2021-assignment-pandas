@@ -77,8 +77,8 @@ def plot_referendum_map(referendum_result_by_regions):
     * Return a gpd.GeoDataFrame with a column 'ratio' containing the results.
     """
     geodata = gpd.read_file('data/regions.geojson').set_index('code')
-    results = np.merge(geodata, referendum_result_by_regions, left_index=True,
-                                right_index=True)
+    results = pd.merge(geodata, referendum_result_by_regions,
+                       left_index=True, right_index=True)
     ratio = results["Choice A"] / (results["Choice A"] +
                                    results["Choice B"])
     results["rate"] = ratio
