@@ -29,7 +29,6 @@ def merge_regions_and_departments(regions, departments):
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
-
     return pd.merge(
         regions[["code", "name"]].rename(columns=({"code": "code_reg"})),
         departments[["region_code", "code", "name"]].rename(
@@ -39,7 +38,6 @@ def merge_regions_and_departments(regions, departments):
         how="right",
         suffixes=("_reg", "_dep"),
     )
-
 
 def merge_referendum_and_areas(referendum, regions_and_departments):
     """Merge referendum and regions_and_departments in one DataFrame.
