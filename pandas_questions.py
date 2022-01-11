@@ -50,7 +50,8 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
         lambda x: x.zfill(2))
     referendum_and_areas = pd.merge(referendum, regions_and_departments,
                                     left_on='Department code',
-                                    right_on="code_dep", how="left").dropna(axis=0)
+                                    right_on="code_dep",
+                                    how="left").dropna(axis=0)
 
     return referendum_and_areas
 
