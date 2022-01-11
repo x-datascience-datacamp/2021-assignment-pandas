@@ -84,12 +84,12 @@ def plot_referendum_map(referendum_result_by_regions):
     # regions_data["name_reg"] = regions_data["name_reg"].str.lower()
     a["ratio"] = a["Choice A"] / (a["Choice A"] + a["Choice B"])
     print(regions_data["name_reg"])
-    # referendum_result_by_regions.column = referendum_result_by_regions
-    # merged_data = regions_data.merge(referendum_result_by_regions, how='inner', right_index=True)
-    merged_data = pd.merge(regions_data, referendum_result_by_regions, on='name_reg', how='left')
+    merged_data = pd.merge(regions_data, referendum_result_by_regions,
+                           on='name_reg', how='left')
     # return gpd.GeoDataFrame({})
     merged_data.plot(column='ratio')
     return merged_data
+
 
 if __name__ == "__main__":
     referendum, df_reg, df_dep = load_data()
