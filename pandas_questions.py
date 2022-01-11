@@ -41,7 +41,7 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     french living abroad.
     """
 
-    referendum["Department code"] = referendum["Department code"].apply(lambda x:'0' + x if x==1 else x)
+    referendum["Department code"] = referendum["Department code"].apply(lambda x:'0' + x if len(x)==1 else x)
     referendum_and_areas = pd.merge(referendum, regions_and_departments, left_on="Department code", right_on="code_dep")
 
     return referendum_and_areas
@@ -74,7 +74,7 @@ def plot_referendum_map(referendum_result_by_regions):
     ratio = results_geo["Choice A"] / (results_geo["Choice A"] + results_geo["Choice B"])
     results_geo["ratio"] = ratio
     results_geo.plot(column="ratio")
-    
+
     return results_geo
 
 
