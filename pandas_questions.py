@@ -59,7 +59,7 @@ def compute_referendum_result_by_regions(referendum_and_areas):
 
 
 def plot_referendum_map(referendum_result_by_regions):
-    """plot"""
+    """Plot."""
     geo_df = gpd.read_file('data/regions.geojson')
     df = pd.merge(referendum_result_by_regions, geo_df.drop(columns=['nom']),
                   left_on='code_reg', right_on='code')
