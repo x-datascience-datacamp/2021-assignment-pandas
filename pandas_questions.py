@@ -28,7 +28,6 @@ def merge_regions_and_departments(regions, departments):
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
-
     merged_tables = pd.merge(regions.set_index('code'), departments,
                              left_index=True, right_on='region_code',
                              suffixes=('_reg', '_dep'))
@@ -43,7 +42,6 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
-
     # Create a code_dep column in referendum, as the field 'Department
     # code' is inconsistent with it (01 becomes 1, etc.)
     referendum['code_dep'] = referendum['Department code']. \
@@ -77,7 +75,6 @@ def plot_referendum_map(referendum_result_by_regions):
       should display the rate of 'Choice A' over all expressed ballots.
     * Return a gpd.GeoDataFrame with a column 'ratio' containing the results.
     """
-
     # First off, load the map and adjust merging column
     region_file = open('data/regions.geojson')
     map_parse = gpd.read_file(region_file).rename(columns={'code': 'code_reg'})
