@@ -1,3 +1,6 @@
+# Jupyter Notebooks as we are only working with .py files
+*.ipynb
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
