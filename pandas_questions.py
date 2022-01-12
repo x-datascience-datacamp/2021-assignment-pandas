@@ -30,14 +30,12 @@ def merge_regions_and_departments(regions, departments):
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
-    col_names = ['code_x', 'name_x', 'code_y', 'name_y']
-    new_names = ['code_reg', 'name_reg', 'code_dep', 'name_dep']
-
+    names = ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     merged = pd.merge(left=regions, right=departments, how='inner',
-                      left_on="code", right_on="region_code")
-    merged = merged[col_names].rename(columns=dict(zip(col_names, new_names)))
+                      left_on="code", right_on="region_code",
+                      suffixes=('_reg', '_dep'))
 
-    return merged
+    return merged[names]
 
 
 def merge_referendum_and_areas(referendum, regions_and_departments):
