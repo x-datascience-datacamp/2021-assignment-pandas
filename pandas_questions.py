@@ -9,6 +9,7 @@ To do that, you will load the data as pandas.DataFrame, merge the info and
 aggregate them by regions and finally plot them on a map using `geopandas`.
 """
 
+
 import pandas as pd
 import geopandas as gpd
 import matplotlib.pyplot as plt
@@ -91,7 +92,6 @@ def merge_referendum_and_areas(referendum, reg_and_dep):
 
 def compute_referendum_result_by_regions(ref_and_ar):
     """Return a table with the absolute count for each region.
-
     The return DataFrame should be indexed by `code_reg` and have columns:
     ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
     """
@@ -119,7 +119,7 @@ def to_poly_multi(geometry):
 
         return Polygon(geometry['coordinates'][0])
 
-    if geometry['type'] == 'MultiPolygon':
+    elif geometry['type'] == 'MultiPolygon':
 
         n = len(geometry['coordinates'])
         val = geometry['coordinates']

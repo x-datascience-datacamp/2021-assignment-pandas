@@ -93,6 +93,7 @@ def test_compute_referendum_result_by_regions():
         'Grand Est', 'Choice A'] == 1_088_684
     assert referendum_result_by_regions.loc['Occitanie', 'Null'] == 62_732
 
+
 def test_plot_referendum_map():
     referendum, df_reg, df_dep = load_data()
     regions_and_departments = merge_regions_and_departments(
@@ -113,5 +114,3 @@ def test_plot_referendum_map():
     assert 'ratio' in gdf_referendum.columns
     gdf_referendum = gdf_referendum.set_index('name_reg')
     assert np.isclose(gdf_referendum['ratio'].loc['Normandie'], 0.427467)
-
-test_plot_referendum_map()
