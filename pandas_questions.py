@@ -13,16 +13,16 @@ import geopandas as gpd
 import matplotlib.pyplot as plt
 
 
-path_to_file = '/Users/anne/Documents/LAURENE/Polytechnique/' \
-    + 'Master DS/datacamp/2021-assignment-pandas/data/'
+# path_to_file = '/Users/anne/Documents/LAURENE/Polytechnique/' \
+#     + 'Master DS/datacamp/2021-assignment-pandas/data/'
 
 
 def load_data():
     """Load data from the CSV files referundum/regions/departments."""
 
-    referendum = pd.read_csv(path_to_file + 'referendum.csv', sep=';')
-    regions = pd.read_csv(path_to_file + 'regions.csv', sep=',')
-    departments = pd.read_csv(path_to_file + 'departments.csv', sep=',')
+    referendum = pd.read_csv('referendum.csv', sep=';')
+    regions = pd.read_csv('regions.csv', sep=',')
+    departments = pd.read_csv('departments.csv', sep=',')
 
     return referendum, regions, departments
 
@@ -51,6 +51,7 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
+
     def unif(x):
         if x[0] == '0':
             x = x[1:]
@@ -67,6 +68,7 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     The return DataFrame should be indexed by `code_reg` and have columns:
     ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
     """
+
     result_num_by_regions = referendum_and_areas.groupby(['code_reg']).sum()
     result_num_by_regions = result_num_by_regions.drop(columns=['Town code'])
     result_by_regions = referendum_and_areas.groupby(['code_reg']).first()
@@ -85,8 +87,9 @@ def plot_referendum_map(referendum_result_by_regions):
       should display the rate of 'Choice A' over all expressed ballots.
     * Return a gpd.GeoDataFrame with a column 'ratio' containing the results.
     """
+
     res_reg = referendum_result_by_regions
-    regs_geo = gpd.read_file(path_to_file + 'regions.geojson')
+    regs_geo = gpd.read_file('regions.geojson')
     geo_and_info = regs_geo.merge(res_reg, left_on='nom', right_on='name_reg')
     geo_and_info['ratio'] = geo_and_info['Choice A'] \
         / (geo_and_info['Choice A'] + geo_and_info['Choice B'])
