@@ -27,8 +27,10 @@ def merge_regions_and_departments(regions, departments):
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
-    department = departments.rename(columns={'name': 'name_dep', 'code': 'code\
-        _dep', 'region_code': 'code_reg'})
+    department = departments.rename(columns={'name': 'name_dep'}
+                                    )
+    department = department.rename(columns={'code': 'code_dep'})
+    department = department.rename(columns={'region_code': 'code_reg'})
     region = regions.rename(columns={'code': 'code_reg', 'name': 'name_reg'})
     region_dep = pd.merge(department, region, on='code_reg')
     region_dep = region_dep[['code_reg', 'name_reg', 'code_dep', 'name_dep']]
@@ -46,9 +48,9 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
         if region_dep['code_dep'][i][0] == '0':
             region_dep['code_dep'][i] = region_dep['code_dep'][i][1:]
     referendums = referendum
-    labels = [i for i in range(len(referendums['Department code']))
-              if referendums['Department code'][i] in ['ZA', 'ZB', 'ZC', 'ZD',
-              'ZM', 'ZN', 'ZP', 'ZS', 'ZW', 'ZX', 'ZZ']]
+    n = len(referendums['Department code'])
+    dom = ['ZA', 'ZB', 'ZC', 'ZD', 'ZM', 'ZN', 'ZP', 'ZS', 'ZW', 'ZX', 'ZZ']
+    labels = [i for i in range(n) if referendums['Department code'][i] in dom]
     referendums = referendums.drop(labels=labels, axis=0)
     referendums = referendums.rename(columns={'Department code': 'code_dep'})
     ref_reg_dep = pd.merge(region_dep, referendums, on='code_dep')
@@ -64,9 +66,10 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     The return DataFrame should be indexed by `code_reg` and have columns:
     ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
     """
-    ref_res = referendum_and_areas[['code_reg', 'name_reg', 'Registered',
-                                    'Abstentions', 'Null', 'Choice A',
-                                    'Choice B']]
+    labels = ['code_reg', 'name_reg', 'Registered',
+              'Abstentions', 'Null', 'Choice A',
+              'Choice B']
+    ref_res = referendum_and_areas[labels]
     ref_res = ref_res.groupby(['code_reg', 'name_reg']).sum().reset_index()
     ref_res = ref_res.set_index('code_reg')
     return ref_res
@@ -83,8 +86,8 @@ def plot_referendum_map(referendum_result_by_regions):
     """
     data = gpd.read_file('data/regions.geojson')
     data = data.rename(columns={'code': 'code_reg', 'nom': 'name_reg'})
-    merger_res = pd.merge(data, referendum_result_by_regions, on=['code_reg',
-                                                                  'name_reg'])
+    labels = ['code_reg', 'name_reg']
+    merger_res = pd.merge(data, referendum_result_by_regions, on=labels)
     merger_res.plot('Choice A')
     merger_res['ratio'] = merger_res['Choice A']/(merger_res['Choice A'] +
                                                   merger_res['Choice B'])
