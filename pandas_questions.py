@@ -54,7 +54,18 @@ def merge_regions_and_departments(regions, departments):
     return regions_and_departments
 
 
-def merge_referendum_and_areas(referendum, regions_and_departments):
+def aux_fun(x):
+
+    if x.startswith('0'):
+
+        return x.split('0')[-1]
+
+    else:
+
+        return x
+
+
+def merge_referendum_and_areas(referendum, reg_and_dep):
     """Merge referendum and regions_and_departments in one DataFrame.
 
     You can drop the lines relative to DOM-TOM-COM departments, and the
@@ -66,8 +77,8 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
 
     referendum['code_dep'] = referendum['Department code'].copy()
 
-    regions_and_departments['code_dep'] = regions_and_departments['code_dep'].apply(lambda x: x.split('0')[-1] if x.startswith('0') else x)
-    regions_and_departments = regions_and_departments[~regions_and_departments['code_dep'].isin(list_to_drop)]
+    reg_and_dep['code_dep'] = reg_and_dep['code_dep'].apply(aux_fun)
+    reg_and_dep = reg_and_dep[~reg_and_dep['code_dep'].isin(list_to_drop)]
     referendum = referendum[~referendum['code_dep'].isin(list_to_drop)]
 
     referendum_and_areas = pd.merge(
@@ -78,21 +89,31 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     return pd.DataFrame(referendum_and_areas)
 
 
-def compute_referendum_result_by_regions(referendum_and_areas):
+def compute_referendum_result_by_regions(ref_and_ar):
     """Return a table with the absolute count for each region.
 
     The return DataFrame should be indexed by `code_reg` and have columns:
     ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
     """
 
-    referendum_result_by_regions = referendum_and_areas.groupby(['code_reg', 'name_reg'], as_index=False).sum()
-    referendum_result_by_regions = referendum_result_by_regions[['code_reg', 'name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']]
-    referendum_result_by_regions.set_index('code_reg', inplace=True)
+    attr_reg = ['code_reg',
+                'name_reg',
+                'Registered',
+                'Abstentions',
+                'Null',
+                'Choice A',
+                'Choice B']
 
-    return referendum_result_by_regions
+    code_name_reg = ['code_reg', 'name_reg']
+
+    ref_res_reg = ref_and_ar.groupby(code_name_reg, as_index=False).sum()
+    ref_res_reg = ref_res_reg[attr_reg]
+    ref_res_reg.set_index('code_reg', inplace=True)
+
+    return ref_res_reg
 
 
-def to_polygon_multipolygon(geometry):
+def to_poly_multi(geometry):
 
     if geometry['type'] == 'Polygon':
 
@@ -100,7 +121,10 @@ def to_polygon_multipolygon(geometry):
 
     if geometry['type'] == 'MultiPolygon':
 
-        return MultiPolygon([Polygon(geometry['coordinates'][i][0]) for i in range(len(geometry['coordinates']))])
+        n = len(geometry['coordinates'])
+        val = geometry['coordinates']
+
+        return MultiPolygon([Polygon(val[i][0]) for i in range(n)])
 
 
 def plot_referendum_map(referendum_result_by_regions):
@@ -118,14 +142,21 @@ def plot_referendum_map(referendum_result_by_regions):
     geo_data = gpd.GeoDataFrame(data['features'])
     geo_data['code_reg'] = geo_data['properties'].apply(lambda x: x['code'])
 
-    referendum_results_view = gpd.GeoDataFrame(pd.merge(referendum_result_by_regions, geo_data, how='left', on='code_reg'))
+    ref_res_v = gpd.GeoDataFrame(
+        pd.merge(
+            referendum_result_by_regions, geo_data, how='left', on='code_reg'
+            )
+        )
 
-    referendum_results_view['geometry'] = referendum_results_view['geometry'].apply(to_polygon_multipolygon)
-    referendum_results_view['ratio'] = referendum_results_view['Choice A'] / referendum_results_view[['Choice A', 'Choice B']].sum(axis=1)
+    ref_res_v['geometry'] = ref_res_v['geometry'].apply(to_poly_multi)
 
-    referendum_results_view.plot(column='ratio', legend=True)
+    num = ref_res_v['Choice A']
+    den = ref_res_v[['Choice A', 'Choice B']].sum(axis=1)
+    ref_res_v['ratio'] = num / den
 
-    return referendum_results_view
+    ref_res_v.plot(column='ratio', legend=True)
+
+    return ref_res_v
 
 
 if __name__ == "__main__":
