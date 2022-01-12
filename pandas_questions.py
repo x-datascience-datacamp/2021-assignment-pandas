@@ -19,9 +19,7 @@ from shapely.geometry import Polygon, MultiPolygon
 
 
 def load_data():
-
     """Load data from the CSV files referundum/regions/departments."""
-
     referendum = pd.read_csv('data/referendum.csv', sep=';')
     regions = pd.read_csv('data/regions.csv', sep=',')
     departments = pd.read_csv('data/departments.csv', sep=',')
@@ -30,13 +28,11 @@ def load_data():
 
 
 def merge_regions_and_departments(regions, departments):
-
     """Merge regions and departments in one DataFrame.
 
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
-
     regions.rename(
         columns={'code': 'code_reg', 'name': 'name_reg'},
         inplace=True)
@@ -56,7 +52,7 @@ def merge_regions_and_departments(regions, departments):
 
 
 def aux_fun(x):
-
+    """Auxiliary function to remove the '0' of the one-digit-numbers."""
     if x.startswith('0'):
 
         return x.split('0')[-1]
@@ -92,10 +88,10 @@ def merge_referendum_and_areas(referendum, reg_and_dep):
 
 def compute_referendum_result_by_regions(ref_and_ar):
     """Return a table with the absolute count for each region.
+    
     The return DataFrame should be indexed by `code_reg` and have columns:
     ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
     """
-
     attr_reg = ['code_reg',
                 'name_reg',
                 'Registered',
@@ -114,7 +110,7 @@ def compute_referendum_result_by_regions(ref_and_ar):
 
 
 def to_poly_multi(geometry):
-
+    """From geometry to Polygon and MultiPolygon."""
     if geometry['type'] == 'Polygon':
 
         return Polygon(geometry['coordinates'][0])
