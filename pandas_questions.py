@@ -88,7 +88,7 @@ def merge_referendum_and_areas(referendum, reg_and_dep):
 
 def compute_referendum_result_by_regions(ref_and_ar):
     """Return a table with the absolute count for each region.
-    
+
     The return DataFrame should be indexed by `code_reg` and have columns:
     ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
     """
