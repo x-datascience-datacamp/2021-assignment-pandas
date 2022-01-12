@@ -82,7 +82,7 @@ def merge_referendum_and_areas(referendum, reg_and_dep):
     referendum = referendum[~referendum['code_dep'].isin(list_to_drop)]
 
     referendum_and_areas = pd.merge(
-        regions_and_departments,
+        reg_and_dep,
         referendum, how='left',
         on='code_dep').dropna(axis=0)
 
