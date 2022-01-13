@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 
 
 def load_data():
-
+    """Load data from the CSV files referundum/regions/departments."""
     referendum = pd.read_csv("data/referendum.csv", sep=";")
     regions = pd.read_csv("data/regions.csv")
     departments = pd.read_csv("data/departments.csv")
@@ -22,7 +22,7 @@ def load_data():
 
 
 def merge_regions_and_departments(regions, departments):
-
+    """Merge regions and departments in one DataFrame."""
     departments = departments.drop(['id', 'slug'], axis=1)
     regions = regions.drop(['id', 'slug'], axis=1)
     regions.rename(columns={"code": "code_reg",
@@ -35,6 +35,7 @@ def merge_regions_and_departments(regions, departments):
 
 
 def modif_dep_code(x):
+    """Modify the dep_code to the right format."""
     if len(x) == 1:
         return "0{}".format(x)
     else:
@@ -42,10 +43,10 @@ def modif_dep_code(x):
 
 
 def merge_referendum_and_areas(referendum, regions_and_departments):
-    """Merge referendum and regions_and_departments in one DataFrame.
-    You can drop the lines relative to DOM-TOM-COM departments, and the
-    french living abroad. """
-
+    """Merge referendum and regions_and_departments in one DataFrame."""
+    temp = referendum["Department code"]
+    temp = temp.astype(str).apply(modif_dep_code)
+    referendum["Department code"] = temp
     referendum_area = pd.merge(regions_and_departments, referendum,
                                left_on='code_dep',
                                right_on="Department code")
