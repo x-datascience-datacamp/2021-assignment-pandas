@@ -28,11 +28,14 @@ def merge_regions_and_departments(regions, departments):
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
 
-    return pd.merge(regions, departments, left_on='code', right_on='region_code', how='left'
+    return pd.merge(regions, departments, left_on='code',
+                    right_on='region_code', how='left'
                     ).drop(
-        ['code_x', 'id_x', 'slug_x', 'slug_y', 'id_y'], axis=1
-    ).rename(columns=
-             {'region_code': 'code_reg', 'name_x': 'name_reg', 'code_y': 'code_dep', 'name_y': 'name_dep'}
+        ['code_x', 'id_x', 'slug_x', 'slug_y', 'id_y'],
+        axis=1
+    ).rename(columns={'region_code': 'code_reg',
+                      'name_x': 'name_reg',
+                      'code_y': 'code_dep', 'name_y': 'name_dep'}
              )
 
 
@@ -43,7 +46,8 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     french living abroad.
     """
 
-    referendum['Department code'] = referendum['Department code'].apply(lambda x: x.zfill(2))
+    referendum['Department code'] = referendum[
+        'Department code'].apply(lambda x: x.zfill(2))
 
     return pd.merge(
         regions_and_departments, referendum,
@@ -58,7 +62,8 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
     """
 
-    referendum_and_areas = referendum_and_areas.groupby(['code_reg', 'name_reg'], as_index=False)[
+    referendum_and_areas = referendum_and_areas.groupby([
+        'code_reg', 'name_reg'], as_index=False)[
         ['Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
         ].sum()
     referendum_and_areas.set_index('code_reg', inplace=True)
@@ -77,15 +82,18 @@ def plot_referendum_map(referendum_result_by_regions):
 
     geo_reg = gpd.read_file('./data/regions.geojson')
 
-    geo_referundum = pd.merge(geo_reg, referendum_result_by_regions, left_on='code', right_on='code_reg', how='inner')
+    geo_referundum = pd.merge(geo_reg, referendum_result_by_regions,
+                              left_on='code', right_on='code_reg', how='inner')
     geo_referundum['ratio'] = geo_referundum['Choice A'] / (
-            geo_referundum['Registered'] - geo_referundum['Abstentions'] - geo_referundum['Null'])
+            geo_referundum[
+                'Registered'] - geo_referundum[
+                    'Abstentions'] - geo_referundum['Null'])
 
-
-
-    geo_referundum.rename({'nom':'name_reg'})
+    geo_referundum.rename({'nom': 'name_reg'})
     geo_referundum.plot(column='ratio', legend=True,
-                        legend_kwds={'label': "choice_A_ratio", 'orientation': "horizontal"})
+                        legend_kwds={
+                            'label': "choice_A_ratio",
+                            'orientation': "horizontal"})
 
     return geo_referundum
 
