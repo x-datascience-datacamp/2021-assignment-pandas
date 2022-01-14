@@ -54,7 +54,7 @@ def test_merge_referendum_and_area():
         'Department code', 'Department name', 'Town code', 'Town name',
         'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B',
         'code_dep', 'code_reg', 'name_reg', 'name_dep'
-    ])
+    ]), "Not right names"
     assert referendum_and_areas.shape == (36565, 13), (
         "Shape of the DataFrame should be (36565, 13). "
         "Check for mismatch in column formats."
