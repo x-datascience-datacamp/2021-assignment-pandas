@@ -34,9 +34,7 @@ def merge_regions_and_departments(regions, departments):
     rename_cols = {"code_reg": "region_code",
                    "name_reg": "name_x",
                    "code_dep": "code",
-                   "name_dep": "name_y"
-                    
-                    }
+                   "name_dep": "name_y"}
     merged = merged[rename_cols.values()]
     for new_name, old_name in rename_cols.items():
         merged.rename(columns={old_name: new_name}, inplace=True)
@@ -51,13 +49,14 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     """
 
     def adapt_nb(s):
-        if s in [str(i) for i in range(1,10)]:
-            return "0"+s 
+        if s in [str(i) for i in range(1, 10)]:
+            return "0{}".format(s)
         return s
-    referendum["Department code"] = referendum["Department code"].apply(adapt_nb)
-
+    department_codes = referendum["Department code"]
+    referendum["Department code"] = department_codes.apply(adapt_nb)
     referendum["code_dep"] = referendum["Department code"]
-    merged = pd.merge(referendum, regions_and_departments,  on='code_dep', how='inner')
+    merged = pd.merge(referendum, regions_and_departments,
+                      on='code_dep', how='inner')
     return merged
 
 
@@ -67,13 +66,13 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     The return DataFrame should be indexed by `code_reg` and have columns:
     ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
     """
-    cols_to_keep = ['Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B', 'code_reg']
+    cols_to_keep = ['Registered', 'Abstentions',
+                    'Null', 'Choice A', 'Choice B', 'code_reg']
     referendum_and_areas = referendum_and_areas[cols_to_keep]
-    
     df_compute = referendum_and_areas.groupby("code_reg").sum()
-
     regions = pd.read_csv("data/regions.csv")
-    df_compute["name_reg"] = list(regions[regions["code"].isin(list(df_compute.index))]["name"])
+    code_regions = regions["code"].isin(list(df_compute.index))
+    df_compute["name_reg"] = list(regions[code_regions]["name"])
     return df_compute
 
 
@@ -87,12 +86,16 @@ def plot_referendum_map(referendum_result_by_regions):
     * Return a gpd.GeoDataFrame with a column 'ratio' containing the results.
     """
     regions_geojson = gpd.read_file("data/regions.geojson")
-    regions_geojson.rename(columns={"nom":"name_reg"}, inplace=True)
-    merged = pd.merge(regions_geojson, referendum_result_by_regions, on='name_reg', how='inner')
-    merged["ratio"] = merged["Choice A"] / (merged["Choice A"] + merged["Choice B"])
+    regions_geojson.rename(columns={"nom": "name_reg"}, inplace=True)
+    merged = pd.merge(regions_geojson,
+                      referendum_result_by_regions,
+                      on="name_reg",
+                      how="inner")
+    totals = merged["Choice A"] + merged["Choice B"]
+    merged["ratio"] = merged["Choice A"] / totals
     # uncomment the 2 lines below to plot the map
-    #merged.plot(column="ratio", cmap='OrRd', legend=True)
-    #plt.show()
+    # merged.plot(column="ratio", cmap='OrRd', legend=True)
+    # plt.show()
     return merged
 
 
