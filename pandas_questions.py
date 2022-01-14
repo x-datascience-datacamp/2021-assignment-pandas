@@ -86,7 +86,7 @@ def compute_referendum_result_by_regions(referendum_and_areas):
         left_on='code_reg',
         right_on='code_reg'
     )
-    return results
+    return results.set_index('code_reg')
 
 
 def plot_referendum_map(referendum_result_by_regions):
