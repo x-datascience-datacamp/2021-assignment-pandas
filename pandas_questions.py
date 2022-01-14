@@ -86,6 +86,7 @@ def plot_referendum_map(referendum_result_by_regions):
                   left_on='code',
                   right_on='code_reg')
     df['ratio'] = df['Choice A'] / (df['Choice A'] + df['Choice B'])
+    df.plot('ratio', legend=True)
     return df
 
 
