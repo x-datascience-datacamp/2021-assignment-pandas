@@ -43,10 +43,6 @@ def merge_regions_and_departments(regions, departments):
          }, axis='columns')
     return df_merged
 
-def extend_code(x):
-    if len(x) == 1:
-        return '0' + x
-    return x
 
 def merge_referendum_and_areas(referendum, regions_and_departments):
     """Merge referendum and regions_and_departments in one DataFrame.
@@ -58,7 +54,9 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     referendum['Department code'] = referendum['Department code'].str.zfill(2)
 
     df_merged = referendum.merge(
-        regions_and_departments, left_on='Department code', right_on='code_dep',
+        regions_and_departments,
+        left_on='Department code',
+        right_on='code_dep',
         how='left'
     )
     return df_merged.dropna()
@@ -81,9 +79,13 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     names = names.drop_duplicates(
         subset=['code_reg', 'name_reg']
     )
-    ref_res = referendum_and_areas.groupby('code_reg').agg(sum)
+    ref_res = referendum_and_areas.groupby(
+        'code_reg'
+    ).agg(sum)
     results = names.merge(
-        ref_res, left_on='code_reg', right_on='code_reg'
+        ref_res,
+        left_on='code_reg',
+        right_on='code_reg'
     )
     return results
 
