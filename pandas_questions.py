@@ -81,8 +81,8 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     ref_res = referendum_and_areas.groupby(
         'code_reg'
     ).agg(sum)
-    results = names.merge(
-        ref_res,
+    results = ref_res.merge(
+        names,
         left_on='code_reg',
         right_on='code_reg'
     )
