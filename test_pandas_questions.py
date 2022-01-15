@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-import geopandas as gpd
+#import geopandas as gpd
 
 from pandas_questions import load_data
 from pandas_questions import plot_referendum_map
